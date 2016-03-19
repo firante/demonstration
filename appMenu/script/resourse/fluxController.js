@@ -9,6 +9,8 @@ var MicroEvent = require('../libs/microevent');
 var AppDispatcher = new Dispatcher();
 
 var ListStore = {
+
+  menu: null,
   orderList: [],
 
   getOrder: function() {
@@ -48,6 +50,12 @@ var ListStore = {
    incrCount(payload) {
      var ind = this.orderList.map(function(val) {return val.name; }).indexOf(payload.item.name);
      this.orderList[ind].count++;
+   },
+   setMenu(menu) {
+     this.menu = menu;
+   },
+   getMenu() {
+     return this.menu;
    }
 };
 

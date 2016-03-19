@@ -5,11 +5,10 @@
 var ReactDOM = require('react-dom');
 var React = require('react');
 var Tr_Order = require('./tr_order_component');
-var Menu = require('../resourse/content');
 var FluxController = require('../resourse/fluxController');
 
 var ListStore = FluxController.ListStore;
-
+var Menu = ListStore.getMenu();
 
 var Order = React.createClass({
 

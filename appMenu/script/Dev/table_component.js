@@ -6,10 +6,10 @@ var ReactDOM = require('react-dom');
 var React = require('react');
 var Order = require('./order_component');
 var FluxController = require('../resourse/fluxController');
-var Menu = require('../resourse/content');
 var Tr = require('./tr_table_component');
 
 var ListStore = FluxController.ListStore;
+var Menu = ListStore.getMenu();
 
 var Table = React.createClass({
 

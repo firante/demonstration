@@ -19093,11 +19093,30 @@ module.exports = require('./lib/React');
 var ReactDOM = require('react-dom');
 var React = require('react');
 var Table = require('./table_component');
-var Menu = require('../resourse/content');
+var FluxController = require('../resourse/fluxController');
 
-ReactDOM.render(React.createElement(Table, { menu: Menu }), document.getElementById('table'));
+var ListStore = FluxController.ListStore;
 
-},{"../resourse/content":167,"./table_component":162,"react":159,"react-dom":3}],161:[function(require,module,exports){
+window.onload = function () {
+  var fileMenu = document.getElementById('fileMenu');
+
+  fileMenu.addEventListener('change', function (e) {
+    var file = fileMenu.files[0];
+    var reader = new FileReader();
+    try {
+      reader.onload = function () {
+        var Menu = JSON.parse(reader.result);
+        ListStore.setMenu(Menu);
+        ReactDOM.render(React.createElement(Table, { menu: Menu }), document.getElementById('table'));
+      };
+      reader.readAsText(file);
+    } catch (e) {
+      alert("Неправильний файл");
+    }
+  });
+};
+
+},{"../resourse/fluxController":167,"./table_component":162,"react":159,"react-dom":3}],161:[function(require,module,exports){
 /*
 * component for generate order table
 */
@@ -19105,10 +19124,10 @@ ReactDOM.render(React.createElement(Table, { menu: Menu }), document.getElementB
 var ReactDOM = require('react-dom');
 var React = require('react');
 var Tr_Order = require('./tr_order_component');
-var Menu = require('../resourse/content');
 var FluxController = require('../resourse/fluxController');
 
 var ListStore = FluxController.ListStore;
+var Menu = ListStore.getMenu();
 
 var Order = React.createClass({
   displayName: 'Order',
@@ -19234,7 +19253,7 @@ var Order = React.createClass({
 
 module.exports = Order;
 
-},{"../resourse/content":167,"../resourse/fluxController":168,"./tr_order_component":163,"react":159,"react-dom":3}],162:[function(require,module,exports){
+},{"../resourse/fluxController":167,"./tr_order_component":163,"react":159,"react-dom":3}],162:[function(require,module,exports){
 /*
 * component for generate menu table
 */
@@ -19243,10 +19262,10 @@ var ReactDOM = require('react-dom');
 var React = require('react');
 var Order = require('./order_component');
 var FluxController = require('../resourse/fluxController');
-var Menu = require('../resourse/content');
 var Tr = require('./tr_table_component');
 
 var ListStore = FluxController.ListStore;
+var Menu = ListStore.getMenu();
 
 var Table = React.createClass({
   displayName: 'Table',
@@ -19322,7 +19341,7 @@ var Table = React.createClass({
 
 module.exports = Table;
 
-},{"../resourse/content":167,"../resourse/fluxController":168,"./order_component":161,"./tr_table_component":164,"react":159,"react-dom":3}],163:[function(require,module,exports){
+},{"../resourse/fluxController":167,"./order_component":161,"./tr_table_component":164,"react":159,"react-dom":3}],163:[function(require,module,exports){
 /*
 * component for generate tr list for order table
 */
@@ -19407,7 +19426,7 @@ var Tr_Order = React.createClass({
 
 module.exports = Tr_Order;
 
-},{"../resourse/fluxController":168,"react":159}],164:[function(require,module,exports){
+},{"../resourse/fluxController":167,"react":159}],164:[function(require,module,exports){
 /*
 * component for generate tr list for menu table
 */
@@ -19472,7 +19491,7 @@ var Tr = React.createClass({
 
 module.exports = Tr;
 
-},{"../resourse/fluxController":168,"react":159}],165:[function(require,module,exports){
+},{"../resourse/fluxController":167,"react":159}],165:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -19748,15 +19767,6 @@ if (typeof module !== "undefined" && 'exports' in module) {
 
 },{}],167:[function(require,module,exports){
 /*
-* input menu 
-*/
-
-var Menu = [{ "name": "Капрезе", "price": "50" }, { "name": "Сирна симфонія", "price": "75" }, { "name": "Асорті м'ясне", "price": "90" }, { "name": "Асорті овочеве", "price": "40" }, { "name": "Оливковий мікс", "price": "18" }, { "name": "Закуска українська радість сало", "price": "23" }, { "name": "Язик з cоусом", "price": "48" }, { "name": "Мікс домашніх солінь", "price": "40" }, { "name": "Оселедець", "price": "25" }, { "name": "Салат з телятини та винограду", "price": "40" }, { "name": "Салат Цезар з куркою", "price": "45" }, { "name": "Салат Цезар з сьомгою", "price": "60" }, { "name": "Стейк з свинини 100г", "price": "25" }, { "name": "Стейк з телятини 100г", "price": "30" }, { "name": "Стейк з лосося", "price": "45" }, { "name": "Деруни по-Львівськи", "price": "25" }, { "name": "Салат Грецький", "price": "40" }];
-
-module.exports = Menu;
-
-},{}],168:[function(require,module,exports){
-/*
 * events control
 * processing ListStore and controls
 */
@@ -19767,6 +19777,8 @@ var MicroEvent = require('../libs/microevent');
 var AppDispatcher = new Dispatcher();
 
 var ListStore = {
+
+  menu: null,
   orderList: [],
 
   getOrder: function () {
@@ -19814,6 +19826,12 @@ var ListStore = {
       return val.name;
     }).indexOf(payload.item.name);
     this.orderList[ind].count++;
+  },
+  setMenu(menu) {
+    this.menu = menu;
+  },
+  getMenu() {
+    return this.menu;
   }
 };
 
